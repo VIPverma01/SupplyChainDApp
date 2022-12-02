@@ -980,12 +980,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x4C6a1BeA07d8e1EA0BEF16EAF0DEa5951faa0C98",
-      "transactionHash": "0x76f0397382d1a74b690f924a0ed7829814bc600a5078a14541a8a7532892a061"
+      "address": "0x8254A3CcBad6263897Bfa06D09D1b144B255B7E7",
+      "transactionHash": "0x7efb376a4486e252d8093c5cd739bf79d6bbe330aed3157b8fb9a53a457a24b4"
     }
   },
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-12-01T07:31:52.914Z",
+  "updatedAt": "2022-12-02T05:04:11.287Z",
   "devdoc": {
     "methods": {}
   },

@@ -1,5 +1,8 @@
 // ReactJS imports
 import React from 'react';
+import {toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 // MaterialUI imports
 import PropTypes from 'prop-types';
@@ -14,7 +17,9 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
 // import { Button } from '@material-ui/core';
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
+import PaymentFailureAlert from './PaymentFailureAlert';
+import getWeb3 from "../getWeb3";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -119,6 +124,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ProductTable(props) {
+  const [showAlert, setShowAlert] = React.useState(false);
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -170,9 +176,26 @@ export default function ProductTable(props) {
     setPage(0);
   };
 
-  const startPayment = async ({ ether, addr }) => {
+  const startPayment = async ({ ether, addr}) => {
+    let accBalance = 10000;
+    const ethValue = ethers.utils.formatUnits(ether, "ether");
     let accounts = [];
     accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+    await window.ethereum.request({method: 'eth_getBalance', params: [accounts[0], 'latest']})
+        .then(balance => {
+            accBalance = ethers.utils.formatEther(balance);
+        })
+    console.log(accBalance);
+    console.log(ethValue);
+    if(parseFloat(accBalance) < parseFloat(ethValue)){
+      toast.configure();
+      toast('Insufficient Balance: ' + accBalance + "ETH\nProduct Price: " + ethValue + "ETH");
+      // this.setShowAlert(true);
+      // alert("Insufficient Balance");
+      return;
+    }
+
     window.ethereum
     .request({
       method: 'eth_sendTransaction',
@@ -189,12 +212,9 @@ export default function ProductTable(props) {
   };
   const handleSubmit = async (e, val, paymentAddress) => {
     e.preventDefault();
-    // val /= 1000000000000000000;
-    // console.log(val);
-    // console.log(paymentAddress);
     await startPayment({
       ether: val,
-      addr: paymentAddress
+      addr: paymentAddress,
     });
   };
 
@@ -244,11 +264,9 @@ export default function ProductTable(props) {
                       </TableCell>
                       <TableCell align="right">{row.price}</TableCell>
                       <TableCell align="right">{row.state}</TableCell>
-                      {/* {paymentAddr = row.paymentAddr}
-                      {val = row.price} */}
                       <TableCell align="right">{
                         <form onSubmit={async (e)=>{ await handleSubmit(e, row.price, row.paymentAddress) }}>
-                          <button>Pay Now</button>
+                          <button >Pay Now</button>
                         </form>
                       }</TableCell>
                     </TableRow>
@@ -272,6 +290,7 @@ export default function ProductTable(props) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
+      <PaymentFailureAlert show={showAlert} productPrice={100} accountBalance={99} closeAlertDialog={setShowAlert}/>
     </div>
   );
 }
