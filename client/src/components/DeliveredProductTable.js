@@ -14,7 +14,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
 // import { Button } from '@material-ui/core';
-// import { ethers } from "ethers";
+import { ethers } from "ethers";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -46,7 +46,7 @@ const headCells = [
   { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
   { id: 'price', numeric: true, disablePadding: false, label: 'Price' },
   { id: 'state', numeric: true, disablePadding: false, label: 'State' },
-  { id: 'paymentAddress', numeric: true, disablePadding: false, label: 'Payment Portal' },
+  { id: 'paymentAddress', numeric: true, disablePadding: false, label: 'Payment address' },
 ];
 
 function EnhancedTableHead(props) {
@@ -170,33 +170,6 @@ export default function ProductTable(props) {
     setPage(0);
   };
 
-  const startPayment = async ({ ether, addr }) => {
-    let accounts = [];
-    accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    window.ethereum
-    .request({
-      method: 'eth_sendTransaction',
-      params: [
-        {
-          from: accounts[0],
-          to: addr,
-          value: "0x" + Number(ether).toString(16)
-        },
-      ],
-    })
-    .then((txHash) => console.log(txHash))
-    .catch((error) => console.error);
-  };
-  const handleSubmit = async (e, val, paymentAddress) => {
-    e.preventDefault();
-    // val /= 1000000000000000000;
-    // console.log(val);
-    // console.log(paymentAddress);
-    await startPayment({
-      ether: val,
-      addr: paymentAddress
-    });
-  };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -246,11 +219,7 @@ export default function ProductTable(props) {
                       <TableCell align="right">{row.state}</TableCell>
                       {/* {paymentAddr = row.paymentAddr}
                       {val = row.price} */}
-                      <TableCell align="right">{
-                        <form onSubmit={async (e)=>{ await handleSubmit(e, row.price, row.paymentAddress) }}>
-                          <button>Pay Now</button>
-                        </form>
-                      }</TableCell>
+                      <TableCell align="right">{row.paymentAddress}</TableCell>
                     </TableRow>
                   );
                 })}

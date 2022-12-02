@@ -16,6 +16,7 @@ import Waiting from "./components/Waiting"
 import NewItem from "./components/NewItem"
 import Notification from "./components/Notification"
 import ProductTable from "./components/ProductTable"
+import DeliveredProductTable from "./components/DeliveredProductTable"
 import SimpleProductTable from "./components/SimpleProductTable"
 
 import "./App.css";
@@ -230,7 +231,7 @@ class App extends Component {
             </Grid>
             <Grid item xs={2}></Grid>
             <Grid item xs={8}>
-              <ProductTable
+              <DeliveredProductTable
                 rows={this.state.productsDelivered}
                 title={'Delivered'}
               />
